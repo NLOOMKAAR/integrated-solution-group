@@ -1,0 +1,47 @@
+name: Build and Deploy to Render
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.set-image.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set image name
+        id: set-image
+        run: echo "::set-output name=image::ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest"
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ steps.set-image.outputs.image }} .
+          docker push ${{ steps.set-image.outputs.image }}
+
+  deploy_to_render:
+    needs: build_and_push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy using Docker image
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          IMAGE: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest
+        run: |
+          if [ -z "$RENDER_API_KEY" ] || [ -z "$RENDER_SERVICE_ID" ]; then
+            echo "RENDER_API_KEY and RENDER_SERVICE_ID must be set in repo secrets to trigger a Render deploy.";
+            exit 1;
+          fi
+          echo "Triggering deploy for service $RENDER_SERVICE_ID using image $IMAGE"
+          curl -s -X POST "https://api.render.com/v1/services/$RENDER_SERVICE_ID/deploys" \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"type\":\"manual\", \"dockerImage\":\"$IMAGE\"}" \
+            | jq . || true

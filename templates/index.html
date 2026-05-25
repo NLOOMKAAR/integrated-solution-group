@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="text-center mb-5">
+  <h1 class="display-5">Welcome to Integrated Solution Group</h1>
+  <p class="lead text-muted">A community-driven learning hub with support, inspiration, events, and AI-powered exploration.</p>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Learning Videos</h5>
+        <p class="card-text">Store short summaries and descriptions for each video. Discover new lessons and revisit key concepts.</p>
+        <a href="{{ url_for('videos') }}" class="btn btn-primary">Open Library</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Discussion Forum</h5>
+        <p class="card-text">Collaborate with community members, ask questions, and keep conversations on-topic.</p>
+        <a href="{{ url_for('forum') }}" class="btn btn-primary">Join the Forum</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Community Support</h5>
+        <p class="card-text">Create support tickets and receive guidance from the community and mentors.</p>
+        <a href="{{ url_for('support') }}" class="btn btn-primary">Ask for Help</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Relevant Events</h5>
+        <p class="card-text">Stay updated with live workshops, webinars, and learning events that matter.</p>
+        <a href="{{ url_for('events') }}" class="btn btn-primary">View Events</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Learning Materials</h5>
+        <p class="card-text">Collect tutorials, documents, and resources aligned to your growth path.</p>
+        <a href="{{ url_for('materials') }}" class="btn btn-primary">Browse Materials</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Exploratory Articles</h5>
+        <p class="card-text">Read the latest scraped insights and discover new topics trending in tech.</p>
+        <a href="{{ url_for('explore') }}" class="btn btn-primary">Explore Articles</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-5">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Latest Inspiration</h4>
+        <p class="card-text">Use the agent to generate creative ideas, new projects, and innovative learning directions.</p>
+        <a href="{{ url_for('assistant') }}" class="btn btn-outline-primary">Open AI Agent</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

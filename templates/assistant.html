@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2>Agentic Assistant</h2>
+    <p class="text-muted">Use the AI agent to summarize topics, generate innovation ideas, or scrape exploratory headlines.</p>
+  </div>
+</div>
+
+<form method="post" class="mb-4">
+  <div class="mb-3">
+    <textarea name="prompt" rows="5" class="form-control" placeholder="Ask the agent for inspiration, summaries, or exploration guidance."></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Run Agent</button>
+</form>
+
+{% if result %}
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Agent Response</h5>
+      <pre class="mb-0">{{ result }}</pre>
+    </div>
+  </div>
+{% else %}
+  <div class="alert alert-info">Ask the agent anything related to creative projects, learning topics, or community support.</div>
+{% endif %}
+{% endblock %}

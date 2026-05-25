@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: integrated-solution-group
+    env: docker
+    docker:
+      dockerfilePath: Dockerfile
+    plan: free

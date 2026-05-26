@@ -129,10 +129,12 @@ def summarize_topic_content(topic_text: str) -> str:
 def scrape_exploratory_articles_tool(query_text: str) -> str:
     try:
         url = "https://news.ycombinator.com/"
-        response = requests.get(url, timeout=12)
+        response = requests.get(url, timeout=10)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
         rows = soup.select(".athing")[:8]
+        if not rows:
+            return f"No articles found for {query_text or 'technology'}. Try again later."
         output = [f"Exploratory topics for {query_text or 'technology'}:"]
         for row in rows:
             title_tag = row.select_one("a.storylink")
@@ -141,9 +143,11 @@ def scrape_exploratory_articles_tool(query_text: str) -> str:
             title = title_tag.text.strip()
             href = title_tag["href"].strip()
             output.append(f"- {title} — {href}")
-        return "\n".join(output)
+        return "\n".join(output) if output else "No articles found. Please try again."
+    except requests.Timeout:
+        return "Request timed out. Please try again later."
     except Exception as error:
-        return f"Unable to scrape exploratory articles: {error}"
+        return "Unable to scrape exploratory articles. Please try again later."
 
 
 def generate_inspiration_tool(topic_text: str) -> str:
@@ -186,6 +190,12 @@ def fetch_scrape_results(query: str = "technology"):
             db.session.add(ExplorationArticle(title=entry["title"], link=entry["link"], source=entry["source"]))
     db.session.commit()
     return ExplorationArticle.query.order_by(ExplorationArticle.created_at.desc()).limit(12).all()
+
+
+@app.route("/health")
+def health():
+    """Health check endpoint for cloud deployments."""
+    return {"status": "ok", "message": "Service is running"}, 200
 
 
 @app.route("/")
@@ -327,4 +337,4 @@ def assistant():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     debug_mode = os.environ.get("FLASK_DEBUG", "0") == "1"
-    app.run(host="0.0.0.0", port=port, debug=debug_mode)
+    app.run(host="0.0.0.0", port=port, debug=debug_mode, threaded=True)
